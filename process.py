@@ -1,10 +1,10 @@
 import os
 
-def processfile(imagefile):
+def processfile(_file):
     images = []
     labels = []
     content = []
-    file = open(os.path.dirname(os.path.realpath(__file__))+"/dataset/"+imagefile, 'rb')
+    file = open(os.path.dirname(os.path.realpath(__file__))+"/dataset/"+_file, 'rb')
     try: content = file.read()
     finally: file.close()
     magic_number = int.from_bytes(content[0:4], "big")
@@ -37,4 +37,3 @@ def processfile(imagefile):
             c += 1
         return labels
 
-data = processfile("train-images-idx3-ubyte")
