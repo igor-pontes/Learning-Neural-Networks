@@ -18,12 +18,13 @@ class NeuralNetwork(object):
         temp.extend(image)
         self.layers[0] = np.transpose(np.asarray(temp).reshape(len(temp),1))
         for i, w in zip(range(1,len(self.layers)), self.weights):
-            self.layers[i] = self.sigmoid(np.matmul(self.layers[i-1], np.transpose(w)))
-        return np.where(self.layers[-1] == np.amax(self.layers[-1]))[1]
+            self.layers[i] = self.sigmoid(np.asarray(np.matmul(self.layers[i-1], np.transpose(w)), dtype=np.float128))
+        return self.layers[-1]
 
     def backprop(self, m):
         delta = [0, 0]
-        for i in m[0:20]:
+        m = m[0:30000]
+        for i in m:
             error = []
             self.forwardprop(i[0])
             error.extend(self.layers[-1]-i[1])
@@ -35,7 +36,12 @@ class NeuralNetwork(object):
                 delta[d] += np.matmul(error[d],self.layers[l])
         
         for w, d in zip(range(0, len(delta)), range(len(delta)-1, -1, -1)):
-            self.weights[w] = delta[d]
-        
+            self.weights[w] = (1/len(m)) * delta[d]
+
+    def predict(self, image):
+        l = self.forwardprop(image)
+
+        return np.argmax(l)
+
     def sgd(self): # TODO
         None
