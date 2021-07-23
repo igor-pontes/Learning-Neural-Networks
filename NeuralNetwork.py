@@ -23,7 +23,7 @@ class NeuralNetwork(object):
 
     def backprop(self, m):
         delta = [0, 0]
-        m = m[0:30000]
+        m = m[0:60000]
         for i in m:
             error = []
             self.forwardprop(i[0])
@@ -40,7 +40,6 @@ class NeuralNetwork(object):
 
     def predict(self, image):
         l = self.forwardprop(image)
-
         return np.argmax(l)
 
     def sgd(self): # TODO
