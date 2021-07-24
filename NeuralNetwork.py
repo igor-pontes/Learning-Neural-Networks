@@ -3,6 +3,7 @@ import math
 class NeuralNetwork(object):
     def __init__(self, *args): 
         self.layers = [x for x in args]
+        #*np.sqrt(2/self.layers[x])
         self.weights = [np.random.randn(self.layers[x+1],self.layers[x]+1)*np.sqrt(2/self.layers[x]) for x in range(len(args)-1)]
 
     def sigmoidgradient(self, x):
@@ -10,7 +11,7 @@ class NeuralNetwork(object):
         return x*(1-x) 
     
     def sigmoid(self, x):
-        x = np.clip( x, -500, 500 )
+        x = np.clip(x, -600, 600)
         return 1./(1.+np.exp(-x))
     
     def forwardprop(self, image = None):
@@ -27,11 +28,12 @@ class NeuralNetwork(object):
 
     def backprop(self, m, lamb):
         delta = np.zeros(len(self.weights), dtype = object)
-        m = m[0:60000]
+        m = m[0:10000]
         for i in m:
             error = np.empty(len(self.weights), dtype = object)
             a = self.forwardprop(i[0])
-            error[0] = np.asarray((a[-1]-i[1]).transpose(), dtype=np.float128)
+            output = np.array([0 if x != i[1] else 1 for x in range(0,a[-1].shape[1])])
+            error[0] = np.asarray((a[-1]-output).transpose(), dtype=np.float128)
            
             for e, w, l in zip(range(1, len(self.weights)), range(len(self.weights)-1, -1, -1), range(len(a)-2, -1, -1)):
                 error[e] = np.asarray(np.matmul(self.weights[w].transpose()[1:,:], error[e-1]) * self.sigmoidgradient(a[l].transpose()[1:,:]), dtype=np.float128)
